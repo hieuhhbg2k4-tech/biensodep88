@@ -1,0 +1,33 @@
+{
+ "updated": "14:34 13/10/2026",
+ "sources": [
+  {
+   "id": "kho-vpa-xe-may",
+   "name": "Kho VPA – Xe máy",
+   "kind": "moto",
+   "count": 520808,
+   "file": "Moto_kho.xlsx"
+  },
+  {
+   "id": "kho-vpa-o-to",
+   "name": "Kho VPA – Ô tô",
+   "kind": "car",
+   "count": 246983,
+   "file": "Oto_Kho.xlsx"
+  },
+  {
+   "id": "phien-11-2026-xe-may",
+   "name": "Phiên 11/2026 – Xe máy",
+   "kind": "moto",
+   "count": 422880,
+   "file": "Phien 11.2026.xlsx"
+  },
+  {
+   "id": "phien-11-2026-o-to-trang",
+   "name": "Phiên 11/2026 – Ô tô trắng",
+   "kind": "car",
+   "count": 320970,
+   "file": "Phien 11.2026.xlsx"
+  }
+ ]
+}

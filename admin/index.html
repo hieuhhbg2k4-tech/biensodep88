@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Quản trị kho biển</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a1220;--bg2:#0e1829;--card:#111d31;--card2:#15233a;--line:#22324d;--line2:#2c3f5f;--ink:#eef2f8;--mute:#93a3bb;--gold:#e8b04b;--gold2:#f5c96b;--ok:#3ecf8e;--bad:#ff7a7a;--blue:#5aa9ff}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Be Vietnam Pro",system-ui,sans-serif}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.wrap{max-width:1500px;margin:0 auto;padding:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:9px;border:1px solid var(--line2);background:var(--card);cursor:pointer;font-weight:600;white-space:nowrap}
+.btn:hover{border-color:var(--gold)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1204;border-color:transparent}
+.btn-red{color:var(--bad);border-color:rgba(255,122,122,.5)}
+.in,select{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;outline:0;width:100%}
+.in:focus,select:focus{border-color:var(--gold)}
+
+/* đăng nhập */
+#login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.login-card{width:min(400px,100%);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+.login-card h1{font-size:20px;margin:0 0 4px}
+.login-card p{color:var(--mute);margin:0 0 16px;font-size:13px}
+.login-card label{display:block;font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px}
+.mtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
+.mtabs button{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px;font-weight:700;color:var(--mute);cursor:pointer}
+.mtabs button.on{border-color:var(--gold);color:var(--gold2);background:rgba(232,176,75,.12)}
+.chk{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:13px;margin:12px 0}
+.msg{min-height:20px;font-size:13px;margin-top:10px}
+.msg.err{color:var(--bad)}.msg.ok{color:var(--ok)}
+
+/* app */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.top h1{font-size:18px;margin:0}
+.top .sub{color:var(--mute);font-size:13px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;gap:24px;flex-wrap:wrap}
+.stat b{color:var(--gold2);font-size:16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px}
+.row{display:flex;gap:10px;padding:12px 14px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.row .grow{flex:1;min-width:220px}
+.filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.btns{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btns>span{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold);margin-right:4px}
+.btns button{min-width:34px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;font-weight:700;color:var(--mute)}
+.btns button.on{border-color:var(--gold);color:var(--gold2);background:rgba(232,176,75,.14)}
+.btns.round button{width:32px;min-width:0;padding:0;border-radius:50%}
+#fAvoid button.on{border-color:#ff7a7a;color:#ff7a7a;background:rgba(255,122,122,.12);text-decoration:line-through}
+/* chọn nhiều (Tránh số) */
+.multi{position:relative}
+.multi>button{width:100%;text-align:left;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.multi>button::after{content:"▾";float:right;color:var(--mute)}
+.multi.on>button{border-color:var(--bad);color:var(--bad)}
+.multi .pop{position:absolute;z-index:5;top:calc(100% + 4px);left:0;min-width:100%;background:var(--card2);border:1px solid var(--line2);border-radius:10px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.multi .pop label{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.multi .pop label:hover{background:rgba(255,255,255,.04)}
+.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line2);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--mute)}
+.pill b{color:var(--ink)}
+.tbl-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:320px}
+table{width:100%;border-collapse:collapse;min-width:980px}
+th{position:sticky;top:0;background:var(--card2);z-index:1;text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);padding:10px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:hover td{background:rgba(255,255,255,.02)}
+tr.sel td{background:rgba(232,176,75,.07)}
+.plate{font-weight:800;color:var(--gold2);font-size:15px;letter-spacing:.02em}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.t-car{background:rgba(90,169,255,.14);color:var(--blue)}
+.t-moto{background:rgba(62,207,142,.14);color:var(--ok)}
+.t-fmt{background:rgba(232,176,75,.12);color:var(--gold2)}
+.t-kho{background:rgba(245,201,107,.18);color:#ffd66b}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.price{font-weight:700;color:var(--gold2)}
+.cost{color:var(--mute)}
+.profit{color:var(--ok);font-weight:600}
+.neg{color:var(--bad)}
+.dim{color:#5f6f88}
+.more{display:flex;justify-content:center;padding:14px}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:9px;font-weight:600;opacity:0;transition:.2s;pointer-events:none;z-index:9}
+.toast.show{opacity:1}
+.loadmsg{padding:30px;text-align:center;color:var(--mute)}
+.owner{display:flex;gap:6px;align-items:center}
+.owner .in{width:170px;padding:8px 10px}
+@media (max-width:700px){.tbl-wrap{max-height:none}.filters{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <form class="login-card" id="loginForm" novalidate>
+    <h1>Quản trị kho biển</h1>
+    <p id="loginSub">Đăng nhập bằng tài khoản email đã được duyệt.</p>
+    <div class="mtabs"><button type="button" data-tab="login" class="on">Đăng nhập</button><button type="button" data-tab="register">Đăng ký</button></div>
+    <label for="email">Email</label>
+    <input class="in" id="email" type="email" autocomplete="email" placeholder="ban@gmail.com" required>
+    <label for="pass">Mật khẩu</label>
+    <input class="in" id="pass" type="password" autocomplete="current-password" placeholder="Tối thiểu 6 ký tự" required>
+    <div id="pass2Wrap" hidden><label for="pass2">Nhập lại mật khẩu</label><input class="in" id="pass2" type="password" autocomplete="new-password"></div>
+    <label class="chk" id="rememberWrap"><input type="checkbox" id="remember" checked> Ghi nhớ trên máy này</label>
+    <button class="btn btn-gold" type="submit" style="width:100%" id="loginBtn">Đăng nhập</button>
+    <div class="msg" id="msg" role="alert"></div>
+  </form>
+</section>
+
+<section id="app" hidden>
+  <div class="wrap">
+    <div class="top">
+      <div><h1>Kho biển số</h1><div class="sub" id="sub">—</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn" id="reload" type="button">↻ Tải lại</button>
+        <a class="btn" href="/" target="_blank" rel="noopener">Xem web</a>
+        <button class="btn btn-red" id="logout" type="button">Đăng xuất</button>
+      </div>
+    </div>
+    <div class="stat" id="stat"><span class="dim">Đang tải dữ liệu…</span></div>
+
+    <div class="panel">
+      <div class="row">
+        <input class="in grow" id="q" placeholder="Tìm biển: 30A, 68686, *68, mẫu AABB / ABAB, 39*39…" aria-label="Tìm biển">
+        <button class="btn btn-red" id="reset" type="button">Xóa lọc</button>
+      </div>
+      <div class="filters">
+        <select id="fSrc" aria-label="Kho"><option value="">Kho (Tất cả VPA)</option></select>
+        <select id="fFmt" aria-label="Định dạng"><option value="">Định dạng</option></select>
+        <select id="fYear" aria-label="Năm sinh"><option value="">Năm sinh</option><option value="all">Mọi năm sinh</option></select>
+        <select id="fProv" aria-label="Tỉnh/TP"><option value="">Toàn quốc</option></select>
+        <select id="fType" aria-label="Loại xe"><option value="">Loại xe</option><option value="0">Ô tô</option><option value="1">Xe máy</option></select>
+        <select id="fMenh" aria-label="Mệnh" title="Theo số cuối: 1-6 Thủy, 2-7 Hỏa, 3-8 Mộc, 4-9 Kim, 5-0 Thổ (gồm hành tương sinh)"><option value="">Mệnh</option></select>
+        <select id="fHead" aria-label="Đầu biển"><option value="">Đầu (tất cả)</option></select>
+        <select id="fGia" aria-label="Mức giá"><option value="">Mức giá</option><option value="0-100">Dưới 100 tr</option><option value="100-200">100 – 200 tr</option><option value="200-500">200 – 500 tr</option><option value="500-1000">500 tr – 1 tỷ</option><option value="lh">Liên hệ (từ 1 tỷ)</option><option value="custom">Tự nhập…</option></select>
+        <span id="giaCustom" hidden><input class="in" id="gMin" type="number" min="0" placeholder="Từ (tr)" style="width:90px"> – <input class="in" id="gMax" type="number" min="0" placeholder="Đến (tr)" style="width:90px"></span>
+        <select id="fDate" aria-label="Lịch đấu giá"><option value="">Lịch đấu giá</option><option value="1">Đã có lịch</option><option value="0">Chưa có lịch</option></select>
+        <select id="sort" aria-label="Sắp xếp"><option value="hot">Nổi bật trước</option><option value="date">Lịch ĐG gần nhất</option><option value="reg">Nhiều người ĐK</option><option value="none">Theo kho</option></select>
+      </div>
+      <div class="row"><div class="btns" id="fLetters"><span>CHỮ</span></div></div>
+      <div class="row"><div class="btns round" id="fAvoid" title="Bỏ các biển có chứa số này. Chọn được nhiều số."><span>TRÁNH SỐ</span></div></div>
+      <div class="row"><div class="btns round" id="fDigits" title="Tổng 5 số cuối, lấy hàng đơn vị (0 = 10 nút). Chọn được nhiều nút."><span>NÚT (TỔNG SỐ)</span></div></div>
+      <div class="row">
+        <span class="pill">Kết quả: <b id="cnt">0</b></span>
+        <span class="pill">Đã chọn: <b id="selCnt">0</b></span>
+        <button class="btn" id="selClear" type="button">Bỏ chọn</button>
+        <button class="btn" id="copyGia" type="button" title="Đã tích chọn biển thì chép biển đã chọn, chưa chọn thì chép tất cả kết quả">Chép kèm giá</button>
+        <button class="btn" id="copyNoGia" type="button" title="Đã tích chọn biển thì chép biển đã chọn, chưa chọn thì chép tất cả kết quả">Chép không giá</button>
+        <button class="btn" id="csv" type="button">Xuất CSV</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tb"><tr><td colspan="12" class="loadmsg">Đang tải…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="more"><button class="btn" id="more" type="button" hidden>Xem thêm</button></div>
+    </div>
+  </div>
+</section>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="/assets/kho-engine.js?v=14"></script>
+<script>
+/* ===== CẤU HÌNH ===== */
+const MEMBER_API = "https://script.google.com/macros/s/AKfycbxZ8CzcWQ2F88n13o1xJzlQqmOVDflJd33FNNaScQLwrZY71d6unreyrARuy7c77u-w/exec"; // Sheet BIENSOVP: tài khoản + biển VPA hằng ngày
+const VPA_BASE = "/vpa-data/";
+const PAGE = 200;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const N = n => n.toLocaleString("vi-VN");
+const money = v => (v == null || isNaN(v)) ? '<span class="dim">—</span>' : (v >= 1000 ? (v/1000).toLocaleString("vi-VN",{maximumFractionDigits:2}) + " tỷ" : v.toLocaleString("vi-VN") + " tr");
+const moneyTxt = v => money(v).replace(/<[^>]+>/g, "");
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove("show"),2400); }
+
+/* ===== Phiên đăng nhập ===== */
+const SESS = "kbpt_member", OWNER = "kbpt_k";
+const sess = {
+  get(){ try{ const v = JSON.parse(localStorage.getItem(SESS) || sessionStorage.getItem(SESS) || "null"); return v && v.exp > Date.now() ? v : null; }catch(e){ return null; } },
+  set(v, keep){ try{ (keep ? localStorage : sessionStorage).setItem(SESS, JSON.stringify(v)); }catch(e){} },
+  clear(){ try{ localStorage.removeItem(SESS); sessionStorage.removeItem(SESS); }catch(e){} }
+};
+const ownerKey = { get(){ try{ return sessionStorage.getItem(OWNER) || ""; }catch(e){ return ""; } }, set(k){ try{ sessionStorage.setItem(OWNER, k); }catch(e){} }, clear(){ try{ sessionStorage.removeItem(OWNER); localStorage.removeItem(OWNER); }catch(e){} } };
+const api = body => fetch(MEMBER_API, { method:"POST", body: JSON.stringify(body) }).then(r => r.json());
+
+let mode = "login";
+function setMode(m){
+  mode = m;
+  document.querySelectorAll(".mtabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === m));
+  $("pass2Wrap").hidden = m !== "register"; $("rememberWrap").hidden = m !== "login";
+  $("loginBtn").textContent = m === "login" ? "Đăng nhập" : "Đăng ký";
+  $("pass").autocomplete = m === "login" ? "current-password" : "new-password";
+  $("loginSub").textContent = m === "login" ? "Đăng nhập bằng tài khoản email đã được duyệt." : "Đăng ký bằng email — chủ kho duyệt xong mới đăng nhập được.";
+  msg("");
+}
+function msg(t, ok){ $("msg").textContent = t; $("msg").className = "msg " + (t ? (ok ? "ok" : "err") : ""); }
+function showLogin(t){ $("app").hidden = true; $("login").hidden = false; if (t) msg(t); }
+
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("email").value.trim().toLowerCase(), pass = $("pass").value;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return msg("Email không hợp lệ.");
+  if (pass.length < 6) return msg("Mật khẩu tối thiểu 6 ký tự.");
+  if (mode === "register" && pass !== $("pass2").value) return msg("Hai lần nhập mật khẩu chưa khớp.");
+  $("loginBtn").disabled = true; msg("Đang xử lý…", true);
+  try{
+    if (mode === "register"){
+      const d = await api({ action:"member_register", email, pass });
+      if (!d.ok) return msg(d.error || "Không đăng ký được.");
+      msg(d.message || "Đăng ký thành công! Tài khoản đang chờ duyệt.", true); $("pass").value = ""; $("pass2").value = "";
+    } else {
+      const keep = $("remember").checked;
+      const d = await api({ action:"member_login", email, pass, remember: keep });
+      if (!d.ok) return msg(d.error || "Không đăng nhập được.");
+      sess.set({ token: d.token, email: d.email, exp: d.exp }, keep);
+      $("pass").value = ""; msg(""); start();
+    }
+  }catch(err){ msg("Không kết nối được máy chủ, vui lòng thử lại."); }
+  finally{ $("loginBtn").disabled = false; }
+});
+document.querySelectorAll(".mtabs button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.tab)));
+$("logout").addEventListener("click", () => {
+  const s = sess.get(); sess.clear(); ownerKey.clear();
+  if (s) api({ action:"member_logout", token: s.token }).catch(()=>{});
+  SRC = []; showLogin("Đã đăng xuất.");
+});
+
+/* ===== Dữ liệu ===== */
+let SRC = [], LIST = [], RES = [], shown = 0, OWNER_ON = false, IDX = null, EXCEL = null;
+const SEL = new Set(), DIG = new Set(), AVOID = new Set(); let LETTER = "";
+
+async function loadExcel(){
+  if (EXCEL) return EXCEL;
+  try{ IDX = await fetch(VPA_BASE + "index.json", {cache:"no-cache"}).then(r => r.json()); }catch(e){ IDX = { sources: [] }; }
+  const metas = IDX.sources.filter(s => s.kind !== "car_yellow");
+  metas.sort((a, b) => (/^Phiên/i.test(b.name) ? 1 : 0) - (/^Phiên/i.test(a.name) ? 1 : 0));
+  EXCEL = (await Promise.all(metas.map(m => fetch(VPA_BASE + m.id + ".json").then(r => r.json()).then(d => KE.fromExcel(m, d)).catch(() => null)))).filter(Boolean);
+  return EXCEL;
+}
+
+async function start(){
+  const s = sess.get();
+  if (!s) return showLogin();
+  $("login").hidden = true; $("app").hidden = false;
+  $("sub").textContent = s.email + " · đang tải dữ liệu…";
+  $("tb").innerHTML = `<tr><td colspan="12" class="loadmsg">Đang tải dữ liệu…</td></tr>`;
+  // Biển VPA hằng ngày: chỉ trả về khi phiên đăng nhập hợp lệ (đồng thời là bước kiểm tra tài khoản)
+  const pLive = api({ action:"member_data", token: s.token }).catch(() => ({ ok:false, error:"Không kết nối được máy chủ." }));
+  const pEx = loadExcel(), pGia = fetch("/assets/gia.json", {cache:"no-cache"}).then(r => r.json()).then(KE.setGia).catch(() => {});
+  const live = await pLive;
+  if (!live.ok){
+    if (live.relogin){ sess.clear(); return showLogin(live.error || "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại."); }
+    toast(live.error || "Không tải được biển VPA hằng ngày");
+  }
+  const ex = await pEx; await pGia;
+  SRC = [live.ok ? KE.fromLive(live) : null, ...ex].filter(Boolean);
+  KE.markDups(SRC);
+  const keep = $("fSrc").value;
+  $("fSrc").length = 1;
+  $("fSrc").insertAdjacentHTML("beforeend", SRC.map(x => `<option value="${esc(x.id)}">${esc(x.name)} (${N(x.len)})</option>`).join(""));
+  $("fSrc").value = [...$("fSrc").options].some(o => o.value === keep) ? keep : "";
+  $("sub").textContent = `${s.email}` + (live.updated ? ` · VPA cập nhật ${live.updated}` : "") + (IDX && IDX.updated ? ` · file VPA ${IDX.updated}` : "");
+  head(); stats(); fillProvs(); apply();
+}
+
+function stats(){
+  let uniq = 0; SRC.forEach(x => { for (let i = 0; i < x.len; i++) if (!x.dup[i]) uniq++; });
+  $("stat").innerHTML = SRC.map(x => `<span>${esc(x.name)}: <b>${N(x.len)}</b></span>`).join("") + `<span>Tổng (bỏ trùng): <b>${N(uniq)}</b> biển</span>`;
+}
+
+function head(){
+  $("thead").innerHTML = `<th style="width:36px"><input type="checkbox" id="selAll" aria-label="Chọn tất cả đang hiện"></th>
+    <th>Biển số</th><th>Dạng số</th><th>Loại xe</th><th>Kho</th><th>Tỉnh/TP</th><th class="num">Nút</th><th class="num">Giá tham khảo</th><th>Lịch ĐG</th>`
+    + (OWNER_ON ? `<th class="num">Giá thu</th><th class="num">Lãi</th><th>Người bán / ghi chú</th><th>Nhóm (sheet)</th>` : "");
+  $("selAll").addEventListener("change", e => {
+    RES.slice(0, shown).forEach(v => { const [s, i] = KE.unpack(LIST, v), t = s.text(i); e.target.checked ? SEL.add(t) : SEL.delete(t); });
+    $("selCnt").textContent = N(SEL.size); redraw();
+  });
+}
+
+function active(){ const v = $("fSrc").value; return !v ? SRC : SRC.filter(s => s.id === v); }
+// Mặc định khi mới vào / xoá lọc: biển Hà Nội, sắp xếp nổi bật trước
+const DEF_PROV = "Hà Nội";
+function fillProvs(){
+  const ps = KE.provs(active()), keep = fillProvs.init ? $("fProv").value : DEF_PROV; fillProvs.init = true;
+  $("fProv").length = 1; $("fProv").insertAdjacentHTML("beforeend", ps.map(p=>`<option>${esc(p)}</option>`).join(""));
+  $("fProv").value = ps.includes(keep) ? keep : ""; fillHeads();
+}
+function fillHeads(){
+  const list = active(), prov = $("fProv").value, keep = $("fHead").value, hs = KE.heads(list, prov);
+  $("fHead").length = 1; $("fHead").insertAdjacentHTML("beforeend", hs.map(h=>`<option>${h}</option>`).join(""));
+  $("fHead").value = hs.includes(keep) ? keep : ""; fillLetters();
+}
+function fillLetters(){
+  const ls = KE.letters(active(), $("fProv").value, $("fHead").value);
+  if (LETTER && !ls.includes(LETTER)) LETTER = "";
+  const box = $("fLetters"); box.querySelectorAll("button").forEach(b => b.remove());
+  box.insertAdjacentHTML("beforeend", [`<button type="button" data-l="" class="${LETTER?"":"on"}">Tất cả</button>`].concat(ls.map(l => `<button type="button" data-l="${l}" class="${LETTER===l?"on":""}">${l}</button>`)).join(""));
+}
+
+function apply(){
+  if (!SRC.length) return;
+  const v = $("fSrc").value;
+  LIST = active();
+  RES = KE.filter(LIST, { q:$("q").value, fmt:$("fFmt").value, avoid:[...AVOID], nut:[...DIG], year:$("fYear").value, prov:$("fProv").value,
+    head:$("fHead").value, letter:LETTER, type:$("fType").value, menh:$("fMenh").value, dated:$("fDate").value }, !v);
+  // Lọc theo mức giá bán trên web (triệu); "Liên hệ" = từ 1 tỷ
+  const gv = $("fGia").value;
+  if (gv){
+    let lo = 0, hi = Infinity, lh = gv === "lh";
+    if (gv === "custom"){ lo = +$("gMin").value || 0; hi = $("gMax").value === "" ? Infinity : +$("gMax").value; }
+    else if (!lh){ [lo, hi] = gv.split("-").map(Number); }
+    RES = RES.filter(v => { const [s, i] = KE.unpack(LIST, v), g = KE.giaOf(s, i); if (g == null) return false;
+      if (g < 0) return lh || hi === Infinity; return !lh && g >= lo && g < hi; });
+  }
+  if ($("sort").value !== "none") KE.sortRes(LIST, RES, $("sort").value);
+  $("cnt").textContent = N(RES.length);
+  redraw();
+}
+function redraw(){ shown = 0; $("tb").innerHTML = ""; render(); }
+
+function rowHtml(v){
+  const [s, i] = KE.unpack(LIST, v), t = s.text(i), on = SEL.has(t), moto = s.moto[i];
+  const price = s.price ? s.price[i] : NaN, ex = s.extra ? s.extra[i] : null, date = s.date ? s.date[i] : 0, cnt = s.cnt ? s.cnt[i] : -1;
+  let owner = "";
+  if (OWNER_ON){
+    const cost = ex && ex.cost != null ? ex.cost : null, profit = (cost != null && !isNaN(price)) ? price - cost : null;
+    owner = `<td class="num cost">${money(cost)}</td><td class="num ${profit!=null&&profit<0?"neg":"profit"}">${money(profit)}</td>
+      <td>${esc(ex && ex.seller) || '<span class="dim">—</span>'}</td><td class="dim">${esc(ex && ex.group) || "—"}${ex && ex.row ? " · dòng " + ex.row : ""}</td>`;
+  }
+  return `<tr class="${on?"sel":""}" data-p="${t}"><td><input type="checkbox" class="pick" ${on?"checked":""} aria-label="Chọn ${t}"></td>
+    <td class="plate">${t}${ex && ex.isNew ? ' <span class="tag t-moto" style="font-size:10px">MỚI</span>' : ""}</td>
+    <td><span class="tag t-fmt">${KE.mainOf(s.tag[i])}</span></td>
+    <td><span class="tag ${moto?"t-moto":"t-car"}">${moto?"Xe máy":"Ô tô"}</span></td>
+    <td><span class="dim">${esc(s.live ? "VPA hằng ngày" : s.name)}</span></td>
+    <td>${esc(s.prov(i))}</td><td class="num">${s.nut[i]}</td><td class="num price">${(g => g == null ? '<span class="dim">—</span>' : esc(KE.giaText(g)))(KE.giaOf(s, i))}</td>
+    <td>${date ? KE.fmtDate(date) + (cnt >= 0 ? ` <span class="dim">· ${cnt} ĐK</span>` : "") : '<span class="dim">—</span>'}</td>${owner}</tr>`;
+}
+function render(){
+  const next = RES.slice(shown, shown + PAGE);
+  $("tb").insertAdjacentHTML("beforeend", next.length ? next.map(rowHtml).join("") : (shown ? "" : '<tr><td colspan="13" class="loadmsg">Không có biển phù hợp.</td></tr>'));
+  shown += next.length; $("more").hidden = shown >= RES.length;
+  $("more").textContent = `Xem thêm (còn ${N(RES.length - shown)})`;
+}
+
+function lineOf(v, gia = true){ const [s, i] = KE.unpack(LIST, v), t = s.text(i); if (!gia) return t; const g = KE.giaText(KE.giaOf(s, i)); return t + (g ? " - " + g : ""); }
+// Có biển đã chọn -> chép biển đã chọn; chưa chọn -> chép tất cả kết quả
+function copyLines(gia){
+  if (!SEL.size) return RES.map(v => lineOf(v, gia));
+  if (!gia) return [...SEL];
+  const m = new Map(); RES.forEach(v => { const [s, i] = KE.unpack(LIST, v), t = s.text(i); if (SEL.has(t) && !m.has(t)) m.set(t, lineOf(v)); });
+  return [...SEL].map(t => m.get(t) || t);
+}
+function copyLabels(){ const w = SEL.size ? ` (${N(SEL.size)} biển đã chọn)` : " (tất cả kết quả)"; $("copyGia").textContent = "Chép kèm giá" + w; $("copyNoGia").textContent = "Chép không giá" + w; }
+async function copyList(lines){
+  if (!lines.length) return toast("Không có biển để chép");
+  if (lines.length > 200000 && !confirm(`Chép ${N(lines.length)} biển có thể làm máy chậm. Nên lọc bớt hoặc dùng Xuất CSV. Vẫn chép?`)) return;
+  toast(await KE.copyText(lines.join("\n")) ? `Đã chép ${N(lines.length)} biển` : "Trình duyệt không cho chép — hãy dùng Xuất CSV");
+}
+
+/* ===== Sự kiện ===== */
+$("fFmt").insertAdjacentHTML("beforeend", KE.FMT_ORDER.map(f=>`<option>${f}</option>`).join(""));
+$("fMenh").insertAdjacentHTML("beforeend", KE.MENH.map(m=>`<option value="${m}">Hợp mệnh ${m}</option>`).join(""));
+{ const y = []; for (let k = 2030; k >= 1950; k--) y.push(`<option>${k}</option>`); $("fYear").insertAdjacentHTML("beforeend", y.join("")); }
+$("fAvoid").insertAdjacentHTML("beforeend", ["0","1","2","3","4","5","6","7","8","9","13","49","53"].map(d => `<button type="button" data-a="${d}">${d}</button>`).join(""));
+$("fDigits").insertAdjacentHTML("beforeend", Array.from({length:10},(_,i)=>`<button type="button" data-d="${i+1}">${i+1}</button>`).join(""));
+
+let tq; $("q").addEventListener("input", () => { clearTimeout(tq); tq = setTimeout(apply, 300); });
+["fFmt","fYear","fType","fMenh","fDate","sort"].forEach(id => $(id).addEventListener("change", apply));
+$("fGia").addEventListener("change", () => { $("giaCustom").hidden = $("fGia").value !== "custom"; apply(); });
+let tg; ["gMin","gMax"].forEach(id => $(id).addEventListener("input", () => { clearTimeout(tg); tg = setTimeout(apply, 300); }));
+$("fSrc").addEventListener("change", () => { fillProvs(); apply(); });
+$("fProv").addEventListener("change", () => { fillHeads(); apply(); });
+$("fHead").addEventListener("change", () => { fillLetters(); apply(); });
+$("fLetters").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; LETTER = LETTER === b.dataset.l ? "" : b.dataset.l; fillLetters(); apply(); });
+$("fDigits").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const d = b.dataset.d; DIG.has(d) ? DIG.delete(d) : DIG.add(d); b.classList.toggle("on", DIG.has(d)); apply(); });
+// Tránh số: nút tròn giống NÚT, chọn nhiều
+$("fAvoid").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const d = b.dataset.a; AVOID.has(d) ? AVOID.delete(d) : AVOID.add(d); b.classList.toggle("on", AVOID.has(d)); apply(); });
+$("reset").addEventListener("click", () => {
+  $("q").value = ""; ["fSrc","fFmt","fYear","fProv","fType","fMenh","fHead","fDate","fGia","gMin","gMax"].forEach(id => $(id).value = ""); $("giaCustom").hidden = true;
+  LETTER = ""; DIG.clear(); AVOID.clear(); document.querySelectorAll("#fAvoid button").forEach(b => b.classList.remove("on"));
+  document.querySelectorAll("#fDigits button").forEach(b => b.classList.remove("on")); $("sort").value = "hot"; fillProvs.init = false; fillProvs(); apply();
+});
+$("more").addEventListener("click", render);
+$("tb").addEventListener("change", e => {
+  if (!e.target.classList.contains("pick")) return;
+  const tr = e.target.closest("tr"), p = tr.dataset.p; e.target.checked ? SEL.add(p) : SEL.delete(p);
+  tr.classList.toggle("sel", e.target.checked); $("selCnt").textContent = N(SEL.size);
+});
+$("selClear").addEventListener("click", () => { SEL.clear(); $("selCnt").textContent = "0"; if ($("selAll")) $("selAll").checked = false;
+  document.querySelectorAll("#tb .pick").forEach(c => { c.checked = false; c.closest("tr").classList.remove("sel"); }); });
+$("copyGia").addEventListener("click", () => copyList(copyLines(true)));
+$("copyNoGia").addEventListener("click", () => copyList(copyLines(false)));
+copyLabels(); new MutationObserver(copyLabels).observe($("selCnt"), { childList: true, characterData: true, subtree: true });
+$("csv").addEventListener("click", () => {
+  const h = ["Biển số","Dạng số","Loại xe","Kho","Tỉnh/TP","Nút","Giá tham khảo","Lịch ĐG","Số người ĐK"].concat(OWNER_ON ? ["Giá thu (tr)","Lãi (tr)","Người bán","Nhóm","Dòng"] : []);
+  const rows = RES.map(v => {
+    const [s, i] = KE.unpack(LIST, v), p = s.price ? s.price[i] : NaN, ex = s.extra ? s.extra[i] : null;
+    const r = [s.text(i), KE.mainOf(s.tag[i]), s.moto[i] ? "Xe máy" : "Ô tô", s.name, s.prov(i), s.nut[i], KE.giaText(KE.giaOf(s, i)),
+      s.date && s.date[i] ? KE.fmtDate(s.date[i]) : "", s.cnt && s.cnt[i] >= 0 ? s.cnt[i] : ""];
+    if (OWNER_ON){ const c = ex && ex.cost != null ? ex.cost : ""; r.push(c, c !== "" && !isNaN(p) ? p - c : "", ex && ex.seller || "", ex && ex.group || "", ex && ex.row || ""); }
+    return r;
+  });
+  KE.downloadCsv("kho-bien-" + new Date().toISOString().slice(0,10) + ".csv", h, rows);
+});
+$("reload").addEventListener("click", async () => { EXCEL = null; await start(); toast("Đã tải dữ liệu mới"); });
+
+/* ===== Bắt đầu ===== */
+setMode("login");
+if (sess.get()) start(); else showLogin();
+</script>
+</body>
+</html>
