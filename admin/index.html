@@ -178,7 +178,7 @@ const moneyTxt = v => money(v).replace(/<[^>]+>/g, "");
 function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove("show"),2400); }
 
 /* ===== Phiên đăng nhập ===== */
-const SESS = "kbpt_member", OWNER = "kbpt_k";
+const SESS = "bsd88_member", OWNER = "bsd88_k";
 const sess = {
   get(){ try{ const v = JSON.parse(localStorage.getItem(SESS) || sessionStorage.getItem(SESS) || "null"); return v && v.exp > Date.now() ? v : null; }catch(e){ return null; } },
   set(v, keep){ try{ (keep ? localStorage : sessionStorage).setItem(SESS, JSON.stringify(v)); }catch(e){} },
@@ -251,7 +251,13 @@ async function start(){
   // Biển VPA hằng ngày: chỉ trả về khi phiên đăng nhập hợp lệ (đồng thời là bước kiểm tra tài khoản)
   const pLive = api({ action:"member_data", token: s.token }).catch(() => ({ ok:false, error:"Không kết nối được máy chủ." }));
   const pEx = loadExcel(), pGia = fetch("/assets/gia.json", {cache:"no-cache"}).then(r => r.json()).then(KE.setGia).catch(() => {});
-  const live = await pLive;
+  let live = await pLive;
+  // Máy chủ thành viên riêng của biensodep88 chỉ kiểm tra phiên, biển VPA tải từ file tĩnh của web
+  if (live.ok && !live.rows){
+    live = await fetch(VPA_BASE + "live.json", {cache:"no-cache"}).then(r => r.json()).catch(() => ({ ok:false, error:"Không tải được biển VPA hằng ngày" }));
+    if (live.ok === undefined) live.ok = true;
+    if (!live.rows) live = { ok:false, error: live.error || "Không tải được biển VPA hằng ngày" };
+  }
   if (!live.ok){
     if (live.relogin){ sess.clear(); return showLogin(live.error || "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại."); }
     toast(live.error || "Không tải được biển VPA hằng ngày");
