@@ -143,7 +143,7 @@
     <div class="tl-log" aria-live="polite"></div>
     <div class="tl-sug"><button>Tìm biển ô tô Hà Nội dưới 100 triệu</button><button>Tôi sinh 1990, biển nào hợp?</button><button>Biển ngũ quý giá bao nhiêu?</button></div>
     <form class="tl-in"><input placeholder="Nhập câu hỏi… (vd: tìm đuôi 6868)" aria-label="Câu hỏi" maxlength="500"><button>Gửi</button></form>
-    <div class="tl-foot">Trợ lý AI có thể nhầm — xác nhận với hotline <a href="tel:${HOT}">093.8888.226</a> trước khi đặt cọc.</div>`;
+    <div class="tl-foot">Trợ lý AI có thể nhầm — xác nhận với hotline <a href="tel:${HOT}">093.8888.226</a> - <a href="tel:0918888299">091.8888.299</a> trước khi đặt cọc.</div>`;
   const tip = document.createElement("div"); tip.className = "tl-tip"; tip.setAttribute("role", "button");
   const TIPS = ["Hỏi AI: <b>biển nào hợp tuổi bạn?</b>", "Tìm <b>đuôi số yêu thích</b> trong 3 giây", "AI báo giá biển <b>ngay lập tức</b>"];
   let ti = 0; const setTip = () => { tip.innerHTML = TIPS[ti++ % TIPS.length] + '<i aria-label="Ẩn">✕</i>'; };
