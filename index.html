@@ -65,6 +65,9 @@ header{position:fixed;top:0;left:0;right:0;z-index:40;background:var(--blue);box
 /* ===== Slider ===== */
 .slider{position:relative;margin-top:16px;border-radius:4px;overflow:hidden;background:#f3dfc3;aspect-ratio:1280/898;transition:height .4s ease}
 .slider.fit{aspect-ratio:auto}
+.slider.fit .slides{height:100%}
+.slider.fit .slides img{height:100%;object-fit:contain}
+.slider:has(img[src*="web15tr"]){background:#8f0d0d}
 .slides{display:flex;align-items:flex-start;transition:transform .5s ease}
 .slides img{flex:0 0 100%;width:100%;height:auto}
 .slider .arr{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border:0;border-radius:50%;background:rgba(0,0,0,.28);color:#fff;font-size:22px;cursor:pointer}
@@ -611,7 +614,7 @@ const LIVE_FILE = VPA_BASE + "live.json";   // file tĩnh do GitHub Action ghi h
 const PAGE = 40;   // biển mỗi trang (8 hàng x 5)
 // Giao diện kiểu bienxeoto.vn
 const FB_URL = "https://www.facebook.com/profile.php?id=61594731628575";   // nút "Chat Facebook" (đổi sang fanpage nếu muốn)
-const SLIDES = ["anh1","anh2","anh3","anh4","banner0","banner-nguquy","banner-locphat","banner-thantai","banner-sanhtien"];
+const SLIDES = ["web15tr","anh2","banner0","banner-nguquy","banner-locphat","banner-thantai","banner-sanhtien"];
 const NUMS = ["81995","77777","19999","92929","92345","11986","96789","88888","36789","93456","22222","91234","73979","55555","02299","01988"];
 const GIAP = ["Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi"];   // ảnh cg1..cg12 theo thứ tự này
 // Nút dạng số: fmt = loại của bộ lọc gốc; fn = kiểm tra 5 số cuối [a,b,c,d,e]
@@ -878,7 +881,7 @@ function initLook(){
   const sl = $("slides"); let cur = 0, tm;
   sl.innerHTML = SLIDES.map((n, i) => `<img src="/assets/bx/${n}.webp" alt="" class="${n.startsWith("banner") ? "bn" : ""}" ${i > 1 ? 'loading="lazy"' : i ? '' : 'fetchpriority="high"'} decoding="async">`).join("");
   $("dots").innerHTML = SLIDES.map((_, i) => `<button type="button" aria-label="Ảnh ${i+1}" data-i="${i}"></button>`).join("");
-  const fit = () => { const im = sl.children[cur]; if (im && im.naturalWidth){ $("slider").classList.add("fit"); $("slider").style.height = (sl.clientWidth * im.naturalHeight / im.naturalWidth) + "px"; } };
+  const fit = () => { const im = sl.children[cur]; if (im && im.naturalWidth){ $("slider").classList.add("fit"); const w = sl.clientWidth, cap = w > 700 ? w * 898 / 1280 : w; $("slider").style.height = Math.min(w * im.naturalHeight / im.naturalWidth, cap) + "px"; } };
   sl.querySelectorAll("img").forEach(im => im.addEventListener("load", () => { if (im === sl.children[cur]) fit(); }));
   addEventListener("resize", fit);
   const go = i => { cur = (i + SLIDES.length) % SLIDES.length; sl.style.transform = `translateX(-${cur * 100}%)`; fit();
