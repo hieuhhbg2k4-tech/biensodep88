@@ -76,7 +76,7 @@ def main():
     if not files: print("Không có file .xlsx trong", SRC); return
     index = []
     for f in os.listdir(OUT):
-        if f.endswith(".json"): os.remove(os.path.join(OUT, f))
+        if f.endswith(".json") and f != "live.json": os.remove(os.path.join(OUT, f))
     for path in files:
         for s in read_file(path):
             fid = slug(s["name"])
