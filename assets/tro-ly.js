@@ -4,7 +4,7 @@
   const TRO_LY_URL = "https://script.google.com/macros/s/AKfycbwePjxnQyAfGaHaT6bnnWAgx6H_2QzQ8OEUZ5k8vEphCmzJrHUGhH-YyRboXBDvJUaQzw/exec";   // ví dụ "https://tro-ly.<tên>.workers.dev"
   const URL_ = window.TRO_LY_URL || TRO_LY_URL;
   if (!URL_ && !/[?&]troly=test/.test(location.search)) return;
-  const HOT = "0888188888", ZALO = "https://zalo.me/0888188888";
+  const HOT = "0888188888", ZALO = "https://zalo.me/0938888226";
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
   /* ===== Phong thủy (cùng quy tắc trang /phong-thuy/) ===== */
@@ -92,7 +92,7 @@
       if (!tk.length && (a.gia_tu || a.gia_den)) { tk = locBien(src, { ...a, so, menh: "", gia_tu: 0, gia_den: 0 }); bo = a.menh ? "mệnh và tầm giá" : "tầm giá"; }
       if (tk.length) { out.bien_tham_khao = lay(src, tk, n);
         out.ghi_chu = `Không có biển đúng mọi điều kiện. Trả lời: báo khách không có (giải thích ngắn lý do, vd số khắc mệnh), RỒI viết đúng câu "Nếu anh/chị muốn tìm dạng ${duoi ? "đuôi " + duoi[1] : "số"} như vậy, em gửi anh/chị tham khảo:" và liệt kê ĐỦ các biển trong bien_tham_khao (đã bỏ điều kiện ${bo}, nói rõ biển nào không hợp mệnh). Không gọi thêm công cụ.`; }
-      else out.ghi_chu = "Không có biển phù hợp. Chỉ nới điều kiện thêm tối đa 1 lần rồi trả lời khách ngay; có thể giải thích lý do và mời gọi 0888.188.888.";
+      else out.ghi_chu = "Không có biển phù hợp. Chỉ nới điều kiện thêm tối đa 1 lần rồi trả lời khách ngay; có thể giải thích lý do và mời gọi 093.8888.226.";
       return out;
     },
     async phong_thuy_tuoi(a) { const y = +a.nam_sinh; if (!(y >= 1900 && y <= 2100)) return { loi: "Năm sinh không hợp lệ" }; return tuoi(y); },
@@ -103,7 +103,7 @@
       if (src) for (const s of src) { const pi = s.pre.indexOf(m[1]); if (pi < 0) continue;
         for (let i = 0; i < s.len; i++) if (s.pi[i] === pi && KE.pad5(s.num[i]) === n && !(s.dup && s.dup[i])) return { co_trong_kho: true, ...info(s, i) }; }
       return { co_trong_kho: false, bien: m[1] + "-" + n.slice(0, 3) + "." + n.slice(3), dang: KE.tagsOf(KE.classify(+n)).join(", "), hop_menh: hopMenh(n),
-        ghi_chu: "Biển không có trong kho web; mời khách gọi 0888.188.888 để kiểm tra." };
+        ghi_chu: "Biển không có trong kho web; mời khách gọi 093.8888.226 để kiểm tra." };
     }
   };
 
@@ -143,7 +143,7 @@
     <div class="tl-log" aria-live="polite"></div>
     <div class="tl-sug"><button>Tìm biển ô tô Hà Nội dưới 100 triệu</button><button>Tôi sinh 1990, biển nào hợp?</button><button>Biển ngũ quý giá bao nhiêu?</button></div>
     <form class="tl-in"><input placeholder="Nhập câu hỏi… (vd: tìm đuôi 6868)" aria-label="Câu hỏi" maxlength="500"><button>Gửi</button></form>
-    <div class="tl-foot">Trợ lý AI có thể nhầm — xác nhận với hotline <a href="tel:${HOT}">0888.188.888</a> trước khi đặt cọc.</div>`;
+    <div class="tl-foot">Trợ lý AI có thể nhầm — xác nhận với hotline <a href="tel:${HOT}">093.8888.226</a> trước khi đặt cọc.</div>`;
   const tip = document.createElement("div"); tip.className = "tl-tip"; tip.setAttribute("role", "button");
   const TIPS = ["Hỏi AI: <b>biển nào hợp tuổi bạn?</b>", "Tìm <b>đuôi số yêu thích</b> trong 3 giây", "AI báo giá biển <b>ngay lập tức</b>"];
   let ti = 0; const setTip = () => { tip.innerHTML = TIPS[ti++ % TIPS.length] + '<i aria-label="Ẩn">✕</i>'; };
@@ -200,8 +200,8 @@
         history.push({ role: "user", content: results });
       }
     } catch (err) {
-      add("a", /429|quota|RESOURCE_EXHAUSTED/i.test(String(err)) ? "Dạ trợ lý AI đã hết lượt trả lời miễn phí hôm nay. Anh/chị gọi hoặc nhắn Zalo 0888.188.888, nhân viên tư vấn ngay ạ."
-        : "Xin lỗi, trợ lý đang bận. Anh/chị thử lại sau ít phút, hoặc gọi/nhắn Zalo 0888.188.888 để được tư vấn ngay ạ.");
+      add("a", /429|quota|RESOURCE_EXHAUSTED/i.test(String(err)) ? "Dạ trợ lý AI đã hết lượt trả lời miễn phí hôm nay. Anh/chị gọi hoặc nhắn Zalo 093.8888.226, nhân viên tư vấn ngay ạ."
+        : "Xin lỗi, trợ lý đang bận. Anh/chị thử lại sau ít phút, hoặc gọi/nhắn Zalo 093.8888.226 để được tư vấn ngay ạ.");
       history = history.slice(0, before);   // bỏ câu hỏi lỗi, không để AI trả lời dồn lần sau
     } finally { wait.remove(); busy = false; save(); }
   });

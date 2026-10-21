@@ -1,7 +1,7 @@
 /* Nút "Tư vấn" / "Ý nghĩa" trên thẻ biển + hộp giải nghĩa biển số (dùng chung trang chủ và trang phong thủy).
    Thẻ biển chỉ cần nút: <button data-yn data-plate="30M-625.68" data-n="62568" data-tags="Lộc phát" data-nut="7" data-price="139 tr" data-msg="...">Ý nghĩa</button> */
 (function () {
-  const HOT = "0888188888", HOT_TXT = "0888.188.888", ZALO = "https://zalo.me/0888188888";
+  const HOT = "0888188888", HOT_TXT = "093.8888.226", ZALO = "https://zalo.me/0938888226";
   // Ngũ hành chữ số (giống trang /phong-thuy/)
   const SO = { Kim:[6,7], Thủy:[0,1], Mộc:[3,4], Hỏa:[9], Thổ:[2,5,8] };
   const SINH = { Kim:"Thủy", Thủy:"Mộc", Mộc:"Hỏa", Hỏa:"Thổ", Thổ:"Kim" }, KHAC = { Kim:"Mộc", Mộc:"Thổ", Thổ:"Thủy", Thủy:"Hỏa", Hỏa:"Kim" };

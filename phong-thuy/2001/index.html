@@ -121,7 +121,7 @@ footer{background:#aba6a7;padding:30px 0 110px;text-align:center;margin-top:30px
     <nav class="menu">
       <a href="/">Trang Chủ</a><a href="/#kho">Kho Biển Số</a><a href="/phong-thuy/" class="on">Xem Phong Thủy</a><a href="/#dinhgia">Định Giá</a><a href="/#lienhe">Liên Hệ</a>
     </nav>
-    <a class="hot" href="tel:0888188888">☎ 0888.188.888</a>
+    <a class="hot" href="tel:0938888226">☎ 093.8888.226</a>
   </div>
 </header>
 
@@ -175,10 +175,10 @@ footer{background:#aba6a7;padding:30px 0 110px;text-align:center;margin-top:30px
 
 <footer>
   <b>Biển Số Đẹp 88</b>
-  <p style="margin:4px 0">Hotline <a href="tel:0888188888"><b>0888.188.888</b></a> · biensodep88.com</p>
+  <p style="margin:4px 0">Hotline <a href="tel:0938888226"><b>093.8888.226</b></a> · biensodep88.com</p>
 </footer>
-<a class="fl zl" href="https://zalo.me/0888188888" target="_blank" rel="noopener" aria-label="Chat Zalo"></a>
-<a class="fl ph" href="tel:0888188888" aria-label="Gọi hotline"></a>
+<a class="fl zl" href="https://zalo.me/0938888226" target="_blank" rel="noopener" aria-label="Chat Zalo"></a>
+<a class="fl ph" href="tel:0938888226" aria-label="Gọi hotline"></a>
 <div class="toast" id="toast"></div>
 
 <script>window.NAM = 2001;</script>
@@ -186,7 +186,7 @@ footer{background:#aba6a7;padding:30px 0 110px;text-align:center;margin-top:30px
 <script src="/assets/y-nghia.js?v=1"></script>
 <script src="/assets/tro-ly.js?v=7" defer></script>
 <script>
-const HOTLINE = "0888188888", ZALO = "https://zalo.me/0888188888";
+const HOTLINE = "0938888226", ZALO = "https://zalo.me/0938888226";
 const VPA_BASE = "/vpa-data/", LIVE_FILE = VPA_BASE + "live.json";
 const PAGE = 40;
 const SALE = { on:true, pct:5, from:20, to:22, fixed:{ 79:68 } };   // giống trang chủ
@@ -269,7 +269,7 @@ function search(){
   per.forEach((arr, k) => { const box = document.querySelector(`.ex[data-k="${k}"]`); if (!box) return;
     const seen = new Set(), pick = []; for (const r of arr){ const n = KE.pad5(r.s.num[r.i]); if (seen.has(n)) continue; seen.add(n); pick.push(r); if (pick.length >= 6) break; }
     box.innerHTML = pick.length ? pick.map(r => `<button type="button" data-q="${esc(r.s.pre[r.s.pi[r.i]] + KE.pad5(r.s.num[r.i]))}" title="Xem biển này">${esc(r.s.text(r.i))} <small style="font:600 12px Poppins;color:var(--red2)">${esc(KE.giaText(KE.giaOf(r.s, r.i)))}</small></button>`).join("")
-      : `<span class="note">Kho ${esc(where)} chưa có biển hợp tuổi ở mức này — gọi <a href="tel:${HOTLINE}" style="color:var(--blue)">0888.188.888</a> để được tìm.</span>`; });
+      : `<span class="note">Kho ${esc(where)} chưa có biển hợp tuổi ở mức này — gọi <a href="tel:${HOTLINE}" style="color:var(--blue)">093.8888.226</a> để được tìm.</span>`; });
   const first = per.find(a => a.length);
   if ($("exLine")) $("exLine").innerHTML = first ? `Ví dụ biển hợp tuổi đang có (${esc(where)}): <b>${esc(first[0].s.text(first[0].i))}</b> – giá ${esc(KE.giaText(KE.giaOf(first[0].s, first[0].i)))}.` : "";
   $("tabs").innerHTML = TIERS.map((t, k) => `<button type="button" data-k="${k}" class="${k === tier ? "on" : ""}">${t[0]} <small>(${N(per[k].length)})</small></button>`).join("");
@@ -292,7 +292,7 @@ function card({ s, i, gk }){
     <div class="act"><a class="btn btn-tv" href="tel:${HOTLINE}" title="Gọi tư vấn ${HOTLINE}">Tư vấn</a><button class="btn btn-yn" type="button" data-yn data-plate="${esc(t)}" data-n="${KE.pad5(s.num[i])}" data-tags="${esc(KE.tagsOf(s.tag[i]).join(", "))}" data-nut="${s.nut[i]}" data-price="${g == null ? "" : g < 0 ? "Liên hệ" : esc(KE.giaText(on ? salePrice(g) : g))}" data-msg="${esc(msg)}">Ý nghĩa</button></div></article>`;
 }
 function render(){
-  if (!RES.length){ $("grid").innerHTML = `<div class="empty">Chưa có biển hợp tuổi ở mức giá này. Thử mức giá khác, đổi tỉnh, hoặc gọi <a href="tel:${HOTLINE}" style="color:var(--blue)">0888.188.888</a> để được tìm giúp.</div>`; $("pager").innerHTML = ""; return; }
+  if (!RES.length){ $("grid").innerHTML = `<div class="empty">Chưa có biển hợp tuổi ở mức giá này. Thử mức giá khác, đổi tỉnh, hoặc gọi <a href="tel:${HOTLINE}" style="color:var(--blue)">093.8888.226</a> để được tìm giúp.</div>`; $("pager").innerHTML = ""; return; }
   const pages = Math.ceil(RES.length / PAGE); pg = Math.min(pg, pages - 1);
   $("grid").innerHTML = RES.slice(pg * PAGE, (pg + 1) * PAGE).map(card).join("");
   if (pages <= 1){ $("pager").innerHTML = ""; return; }
