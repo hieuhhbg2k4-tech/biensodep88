@@ -1,0 +1,45 @@
+# Tự đồng bộ bảng giá + bộ máy tính giá từ khobienphongthuy.vn mỗi giờ
+name: Dong bo gia tu khobienphongthuy.vn
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: sync-gia
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tai gia tu khobienphongthuy.vn
+        run: |
+          set -e
+          T=$(date +%s)
+          curl -fsSL --max-time 60 "https://khobienphongthuy.vn/assets/gia.json?t=$T" -o /tmp/gia.json
+          curl -fsSL --max-time 60 "https://khobienphongthuy.vn/assets/kho-engine.js?t=$T" -o /tmp/kho-engine.js
+          python3 -c "import json;d=json.load(open('/tmp/gia.json'));assert len(json.dumps(d))>10000"
+          node --check /tmp/kho-engine.js
+          cp /tmp/gia.json assets/gia.json
+          cp /tmp/kho-engine.js assets/kho-engine.js
+      - name: Luu neu co thay doi
+        id: commit
+        run: |
+          git config user.name "gia-bot"; git config user.email "gia-bot@users.noreply.github.com"
+          git add assets/gia.json assets/kho-engine.js
+          if git diff --cached --quiet; then echo "Khong co gi moi"; exit 0; fi
+          V=$(date +%y%m%d%H)
+          grep -rlI --exclude-dir=.git "kho-engine.js?v=" . | xargs sed -i -E "s/kho-engine\.js\?v=[0-9]+/kho-engine.js?v=$V/g"
+          git add -A
+          git commit -m "Dong bo gia tu khobienphongthuy.vn"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 10; done
+          echo "changed=1" >> "$GITHUB_OUTPUT"
+      - name: Cap nhat trang web
+        if: steps.commit.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || true
