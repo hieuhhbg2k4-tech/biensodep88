@@ -17,6 +17,8 @@
  */
 
 const OWNER_EMAIL = "biensodaugia88@gmail.com";
+// Link Ứng dụng web (…/exec) — dùng cho nút DUYỆT/KHOÁ trong Gmail. Đổi nếu tạo bản triển khai mới.
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzuhBIf9u5A_53TzsbkdyN6hQ9aS0-bljutUPDFikOb7hfQETDRjgyWyfx-hJntI_c1/exec";
 const SITE = "https://biensodep88.com";
 const HOTLINE = "093.8888.226 - 091.8888.299";
 const SESSION_DAYS_REMEMBER = 30;
@@ -29,8 +31,21 @@ const ST_TXT = { CHO_DUYET: "Chờ duyệt", DA_DUYET: "Đã duyệt", KHOA: "Đ
 function setup() {
   const p = PropertiesService.getScriptProperties();
   if (!p.getProperty("SECRET")) p.setProperty("SECRET", Utilities.getUuid() + Utilities.getUuid());
-  MailApp.getRemainingDailyQuota();    // xin quyền gửi email
+  guiDanhSach();
   return "OK";
+}
+
+// Chạy hàm này bất cứ lúc nào để Gmail nhận lại link "Danh sách thành viên" (duyệt / khoá / xoá)
+function guiDanhSach() {
+  const pending = allM_().filter(x => x.m.s === ST.PENDING).map(x => esc_(x.e));
+  MailApp.sendEmail({
+    to: OWNER_EMAIL,
+    subject: "[biensodep88] Danh sách thành viên" + (pending.length ? " — " + pending.length + " người chờ duyệt" : ""),
+    htmlBody: "<div style='font:15px Arial'><p>Bấm để mở danh sách thành viên biensodep88.com (duyệt / khoá / xoá):</p>"
+      + "<p><a href='" + listUrl_() + "' style='background:#1a7f37;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:bold'>MỞ DANH SÁCH THÀNH VIÊN</a></p>"
+      + (pending.length ? "<p>Đang chờ duyệt: " + pending.join(", ") + "</p>" : "")
+      + "<p style='color:#666'>Nếu bấm báo \"không thể mở tệp\": giữ nút, chọn mở bằng Chrome ẩn danh, hoặc đăng xuất bớt tài khoản Google khác trên trình duyệt.</p></div>"
+  });
 }
 
 /* ========== HTTP ========== */
@@ -162,7 +177,7 @@ function page_(t, back) {
     + "<a href='" + SITE + "/admin/' target='_top'>Mở trang quản trị</a></div>");
 }
 function esc_(s) { return String(s).replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c])); }
-function base_() { return ScriptApp.getService().getUrl(); }
+function base_() { return WEBAPP_URL || ScriptApp.getService().getUrl(); }
 function link_(a, e) { return base_() + "?action=" + a + "&email=" + encodeURIComponent(e) + "&k=" + sign_(a + ":" + e); }
 function listUrl_() { return base_() + "?action=list&k=" + sign_("list"); }
 function cleanEmail_(e) { e = String(e || "").trim().toLowerCase(); return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e) ? e : ""; }
